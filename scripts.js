@@ -2,8 +2,6 @@
 
 const API_URL = 'https://apis.is/isnic?domain=';
 
-
-
 /**
 * Leit að lénum á Íslandi gegnum apis.is
 */
@@ -85,8 +83,7 @@ const program = (() => {
       })
       .catch((error) => {
         displayError('Villa!');
-        console.error(error);
-      })
+      });
   }
 
   function onSubmit(e) {
@@ -94,9 +91,11 @@ const program = (() => {
 
     const input = e.target.querySelector('input');
 
-    // TODO höndla tómastreng
-
-    fetchData(input.value);
+    if (input.value !== '') {
+      fetchData(input.value);
+    } else {
+      displayError('Lén verður að vera strengur');
+    }
   }
 
   function init(_domains) {
