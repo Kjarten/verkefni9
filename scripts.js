@@ -17,6 +17,25 @@ const program = (() => {
     container.appendChild(document.createTextNode(error));
   }
 
+  function loadingData() {
+    const dl = document.createElement('dl');
+    const loadingImg = document.createElement('img');
+    loadingImg.setAttribute('class', 'loading');
+    loadingImg.src = 'loading.gif';
+    dl.appendChild(loadingImg);
+    const loadingText = document.createElement('dl');
+    loadingText.setAttribute('class', 'loading');
+    loadingText.appendChild(document.createTextNode('Leita að léni...'));
+    dl.appendChild(loadingText);
+
+    const container = domains.querySelector('.results');
+
+    while (container.firstChild) {
+      container.removeChild(container.firstChild);
+    }
+    container.appendChild(dl);
+  }
+
   function elementCreation(propList, stringList) {
     const dl = document.createElement('dl');
 
@@ -43,7 +62,7 @@ const program = (() => {
 
   function displayDomain(domainsList) {
     if (domainsList.length === 0) {
-      displayError('Fann ekki lén');
+      displayError('Lén er ekki skráð');
       return;
     }
 
@@ -82,12 +101,13 @@ const program = (() => {
         displayDomain(data.results);
       })
       .catch((error) => {
-        displayError('Villa!');
+        displayError('Villa við að sækja gögn');
       });
   }
 
   function onSubmit(e) {
     e.preventDefault();
+    loadingData();
 
     const input = e.target.querySelector('input');
 
