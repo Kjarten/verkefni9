@@ -19,12 +19,11 @@ const program = (() => {
 
   function loadingData() {
     const dl = document.createElement('dl');
+    dl.setAttribute('class', 'loading');
     const loadingImg = document.createElement('img');
-    loadingImg.setAttribute('class', 'loading');
     loadingImg.src = 'loading.gif';
     dl.appendChild(loadingImg);
-    const loadingText = document.createElement('dl');
-    loadingText.setAttribute('class', 'loading');
+    const loadingText = document.createElement('dt');
     loadingText.appendChild(document.createTextNode('Leita að léni...'));
     dl.appendChild(loadingText);
 
@@ -68,7 +67,7 @@ const program = (() => {
 
     const [{
       domain, registered, lastChange, expires, registrantname, email, address,
-      country
+      country,
     }] = domainsList;
 
     const stringList = ['Lén', 'Skráð', 'Seinast breytt', 'Rennur út',
@@ -100,7 +99,7 @@ const program = (() => {
       .then((data) => {
         displayDomain(data.results);
       })
-      .catch((error) => {
+      .catch(() => {
         displayError('Villa við að sækja gögn');
       });
   }
