@@ -1,45 +1,14 @@
 // const API_URL = '/example.json?domain=';
+
 const API_URL = 'https://apis.is/isnic?domain=';
 
-document.addEventListener('DomContentLoaded', () => {
-  const domains = document.querySelector('.domains');
 
-  program.init(domains);
-});
+
 /**
 * Leit að lénum á Íslandi gegnum apis.is
 */
 const program = (() => {
   let domains;
-
-  function displayDomain(domainsList) {
-    if (domainsList.length === 0) {
-      displayError('Fann ekki lén');
-      return;
-    }
-
-    const [{ domain, registered, lastChange, expires }] = domainsList;
-
-    const dl = document.createElement('dl');
-
-    const domainElement = document.createElement('dt');
-    domainElement.appendChild(document.createTextNode('Lén'));
-    dl.appendChild(domainElement);
-
-    const domainValueElement = document.createElement('dd');
-    domainValueElement.appendChild(document.createTextNode(domain));
-    dl.appendChild(domainValueElement);
-
-    const container = domains.querySelector('.results');
-
-    while (container.firstChild) {
-      container.removeChild(container.firstChild);
-    }
-    // registrantname: (fields.find(x => x.label === 'Registrant name:') || { val: '' }).val,
-    // address: (fields.find(x => x.label === 'Address:') || { val: '' }).val,
-    // country: (fields.find(x => x.label === 'Country:') || { val: '' }).val,
-    // email: (fields.find(x => x.label === 'E-mail:') || { val: '' }).val,
-  }
 
   function displayError(error) {
     const container = domains.querySelector('.results');
@@ -48,6 +17,59 @@ const program = (() => {
       container.removeChild(container.firstChild);
     }
     container.appendChild(document.createTextNode(error));
+  }
+
+  function elementCreation(propList, stringList) {
+    const dl = document.createElement('dl');
+
+    let i;
+    for (i = 0; i < stringList.length; i += 1) {
+      if (propList[i].length !== 0) {
+        const domainElement = document.createElement('dt');
+        domainElement.appendChild(document.createTextNode(stringList[i]));
+        dl.appendChild(domainElement);
+
+        const domainValueElement = document.createElement('dd');
+        domainValueElement.appendChild(document.createTextNode(propList[i]));
+        dl.appendChild(domainValueElement);
+
+        const container = domains.querySelector('.results');
+
+        while (container.firstChild) {
+          container.removeChild(container.firstChild);
+        }
+        container.appendChild(dl);
+      }
+    }
+  }
+
+  function displayDomain(domainsList) {
+    if (domainsList.length === 0) {
+      displayError('Fann ekki lén');
+      return;
+    }
+
+    const [{
+      domain, registered, lastChange, expires, registrantname, email, address,
+      country
+    }] = domainsList;
+
+    const stringList = ['Lén', 'Skráð', 'Seinast breytt', 'Rennur út',
+      'Skráningaraðili', 'Netfang', 'Heimilisfang', 'Land'];
+
+    const registeredDate = new Date(registered);
+    const registeredISO = registeredDate.toISOString().split('T')[0];
+
+    const lastChangeDate = new Date(lastChange);
+    const lastChangeISO = lastChangeDate.toISOString().split('T')[0];
+
+    const expiresDate = new Date(expires);
+    const expiresISO = expiresDate.toISOString().split('T')[0];
+
+    const propList = [domain, registeredISO, lastChangeISO, expiresISO,
+      registrantname, email, address, country];
+
+    elementCreation(propList, stringList);
   }
 
   function fetchData(domain) {
@@ -69,6 +91,7 @@ const program = (() => {
 
   function onSubmit(e) {
     e.preventDefault();
+
     const input = e.target.querySelector('input');
 
     // TODO höndla tómastreng
@@ -77,7 +100,7 @@ const program = (() => {
   }
 
   function init(_domains) {
-    domains = _domains
+    domains = _domains;
 
     const form = domains.querySelector('form');
     form.addEventListener('submit', onSubmit);
@@ -88,6 +111,8 @@ const program = (() => {
   };
 })();
 
-//document.addEventListener('DOMContentLoaded', () => {
-//  program.init(domains);
-//});
+document.addEventListener('DOMContentLoaded', () => {
+  const domains = document.querySelector('.domains');
+
+  program.init(domains);
+});
